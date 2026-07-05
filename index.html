@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MenQ · Պահեստ</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text x='50%25' y='56%25' font-size='54' font-family='Sylfaen,serif' font-weight='700' font-style='italic' fill='%230ea5e9' text-anchor='middle' dominant-baseline='central'>Մ</text></svg>">
+<style>
+:root{
+  --bg:#f4f6fb; --card:#fff; --ink:#1a2233; --muted:#5b6579; --line:#e6eaf2;
+  --brand:#0ea5e9; --brand2:#38bdf8; --brand-strong:#0369a1; --azure:#0ea5e9;
+  --ok:#16a34a; --ok-strong:#15803d; --warn:#e0a800; --bad:#dc2626;
+  --shadow:0 1px 3px rgba(20,30,60,.08),0 6px 24px rgba(20,30,60,.06); --r:14px; --topbar-h:60px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:"Segoe UI",system-ui,-apple-system,"Noto Sans Armenian","Noto Sans",sans-serif;
+  background:var(--bg);color:var(--ink);font-size:15px;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit;font-size:16px}
+:focus-visible{outline:2px solid var(--brand-strong);outline-offset:2px}
+.hidden{display:none!important}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.row>.btn{margin-bottom:10px}
+.grow{flex:1}
+.muted{color:var(--muted)}
+.right{text-align:right}
+.center{text-align:center}
+td.right,.kpi .v,.totbar{font-variant-numeric:tabular-nums}
+.pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:600}
+.pill.ok{background:#e7f7ee;color:#166534} .pill.bad{background:#fdeaea;color:#b91c1c}
+.pill.warn{background:#fdf5e0;color:#92400e} .pill.info{background:#e0f2fe;color:#0369a1}
+
+label.fld{display:block;margin:0 0 10px}
+label.fld>span{display:block;font-size:12.5px;color:var(--muted);margin-bottom:4px;font-weight:600}
+input:not([type=file]):not([type=checkbox]):not([type=radio]),select,textarea{
+  width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);outline:none}
+input:not([type=file]):not([type=checkbox]):not([type=radio]),select{height:44px}
+textarea{min-height:88px;resize:vertical}
+select{appearance:none;-webkit-appearance:none;padding-right:34px;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%235b6579' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center}
+input:focus,select:focus,textarea:focus{border-color:var(--brand2);box-shadow:0 0 0 3px rgba(14,165,233,.18)}
+.btn{border:1px solid var(--line);background:#fff;color:var(--ink);padding:10px 16px;border-radius:10px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn:hover{border-color:#cfd7e6}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--brand-strong);border-color:var(--brand-strong);color:#fff}
+.btn.primary:hover{background:#075985}
+.btn.ok{background:var(--ok-strong);border-color:var(--ok-strong);color:#fff}
+.btn.ok:hover{background:#166534}
+.btn.bad{background:#fff;border-color:#f2c4c4;color:var(--bad)}
+.btn.bad:hover{background:#fdeaea}
+.btn.bad.lg{background:var(--bad);border-color:var(--bad);color:#fff}
+.btn.bad.lg:hover{background:#b91c1c}
+.btn.lg{padding:14px 20px;font-size:16px}
+.btn.sm{padding:7px 11px;font-size:13px;border-radius:8px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+#login{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(1200px 600px at 30% -10%,#e0f2fe,transparent),var(--bg);z-index:50}
+#login .box{background:#fff;border-radius:20px;box-shadow:var(--shadow);padding:34px;width:min(340px,calc(100vw - 32px))}
+.logo{font-weight:800;font-size:26px;letter-spacing:.5px}
+.logo b{color:var(--brand)}
+
+#app{display:flex;min-height:100vh}
+#side{width:224px;background:#0f1730;color:#c9d2e8;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+#side .brand{padding:18px 20px;font-weight:800;font-size:22px;letter-spacing:.5px;color:#fff}
+#side .brand b{color:#38bdf8}
+.nav{flex:1;overflow:auto;padding:6px}
+.nav .item{display:flex;align-items:center;gap:11px;padding:11px 14px;border-radius:10px;color:#aeb9d6;font-weight:600;cursor:pointer;white-space:nowrap}
+.nav .item:hover{background:#182142;color:#fff}
+.nav .item.active{background:var(--brand-strong);color:#fff}
+.nav .item svg{width:19px;height:19px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#side .foot{padding:12px;border-top:1px solid #1c274a;font-size:13px;color:#9aa6c6}
+#main{flex:1;min-width:0;display:flex;flex-direction:column}
+#top{display:flex;align-items:center;gap:12px;padding:14px 22px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10;flex-wrap:wrap}
+#top .title{font-size:18px;font-weight:700}
+.shopbrand{display:inline-flex;align-items:center;gap:10px;margin-left:18px;font-weight:700;font-size:17px;color:var(--ink)}
+.shopbrand img{height:34px;max-width:140px;object-fit:contain;border-radius:6px}
+.profchip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 14px 4px 4px;font-weight:600;cursor:pointer;font-size:14px;color:var(--ink)}
+.profchip:hover{border-color:#cfd7e6}
+.avatar{width:30px;height:30px;border-radius:50%;background:var(--brand-strong);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex:none}
+#wrap{padding:22px;max-width:1200px;width:100%;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:18px;margin-bottom:18px}
+.card h3{margin:0 0 14px;font-size:16px}
+.grid{display:grid;gap:14px}
+.kpis{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:16px;box-shadow:var(--shadow)}
+.kpi .k{font-size:12.5px;color:var(--muted);font-weight:600}
+.kpi .v{font-size:22px;font-weight:800;margin-top:6px;overflow-wrap:anywhere}
+.kpi .v.small{font-size:20px}
+
+table{width:100%;border-collapse:separate;border-spacing:0}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);font-size:14px}
+th{font-size:12px;color:var(--muted);letter-spacing:.3px;white-space:nowrap;font-weight:700}
+tbody tr:hover{background:#fafbff}
+.tbl-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px}
+.tbl-wrap table th{position:sticky;top:0;background:#f7f9fd;box-shadow:inset 0 -1px 0 var(--line);border-bottom:0}
+.thumb{width:34px;height:34px;border-radius:8px;object-fit:cover;background:#eef1f8;border:1px solid var(--line)}
+
+.pos{display:grid;grid-template-columns:1fr 380px;gap:18px;align-items:start}
+.prodgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.pcard{border:1px solid var(--line);border-radius:12px;padding:10px;cursor:pointer;background:#fff;transition:.1s;text-align:left}
+.pcard:hover{border-color:var(--brand2);transform:translateY(-1px);box-shadow:var(--shadow)}
+.pcard .nm{font-weight:700;font-size:14px;line-height:1.3}
+.pcard .vr{font-size:12px;color:var(--muted)}
+.pcard .pr{font-weight:800;margin-top:6px;color:var(--brand-strong)}
+.pcard .qt{font-size:12px;color:var(--muted)}
+.pcard.out{opacity:.6;filter:grayscale(1);pointer-events:none}
+.gridmsg{grid-column:1/-1;text-align:center;padding:24px 0}
+.cart{position:sticky;top:calc(var(--topbar-h) + 22px)}
+.cartlist{max-height:46vh;overflow:auto;margin:-4px 0}
+.citem{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line)}
+.citem .nm{flex:1;min-width:0}
+.citem .nm b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.citem input[type=number]{text-align:right}
+.qbtn{width:34px;height:34px;border-radius:8px;border:1px solid var(--line);background:#fff;font-size:17px;font-weight:700;line-height:1}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;height:44px}
+.seg button{border:0;background:#fff;padding:0 10px;font-weight:600;font-size:14px;color:var(--muted);display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;min-width:0}
+.seg button.on{background:var(--brand-strong);color:#fff}
+.dd{position:relative}
+.dd-btn{width:100%;height:44px;padding:0 12px;border:1px solid var(--line);border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;font-weight:500;color:var(--ink);text-align:left;font-size:16px}
+.dd-btn:hover{border-color:#cfd7e6}
+.dd.open .dd-btn{border-color:var(--brand2);box-shadow:0 0 0 3px rgba(14,165,233,.18)}
+.dd-btn .dd-lbl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dd-btn svg{width:14px;height:14px;flex:none;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:.15s}
+.dd.open .dd-btn svg{transform:rotate(180deg)}
+.dd-menu{position:absolute;top:calc(100% + 5px);left:0;right:0;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);z-index:70;max-height:264px;overflow:auto;padding:6px;display:none}
+.dd.open>.dd-menu{display:block}
+.dd-opt{padding:10px 12px;border-radius:8px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+.dd-opt:hover{background:#f1f5fb}
+.dd-opt.sel{background:#e0f2fe;color:var(--brand-strong);font-weight:700}
+.totbar{display:flex;justify-content:space-between;align-items:baseline;margin:6px 0}
+.totbar .big{font-size:26px;font-weight:800}
+
+.modal{position:fixed;inset:0;background:rgba(15,23,48,.45);display:flex;align-items:center;justify-content:center;z-index:60;padding:16px}
+.modal .sheet{background:#fff;border-radius:16px;box-shadow:var(--shadow);width:620px;max-width:calc(100vw - 32px);max-height:92vh;overflow:auto}
+.modal .sheet.wide{width:860px}
+.mhead{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff}
+.mhead h3{margin:0}
+.mbody{padding:20px;overflow-x:hidden}
+.mfoot{padding:16px 20px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:10px;position:sticky;bottom:0;background:#fff}
+.x{border:0;background:#f1f4fa;width:34px;height:34px;border-radius:10px;font-size:18px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 14px}
+.two>*,.three>*{min-width:0}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+.fgrid>*{min-width:0}
+.fgrid .span2{grid-column:1/-1}
+@media(max-width:520px){.fgrid{grid-template-columns:1fr}.fgrid .span2{grid-column:auto}}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#0f1730;color:#fff;padding:12px 20px;border-radius:12px;box-shadow:var(--shadow);z-index:90;font-weight:600;opacity:0;transition:.25s;pointer-events:none;max-width:calc(100vw - 32px)}
+.toast.show{opacity:1}
+.toast.bad{background:var(--bad)} .toast.ok{background:var(--ok-strong)}
+.subtabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.subtabs button{border:1px solid var(--line);background:#fff;padding:8px 14px;border-radius:999px;font-weight:600;color:var(--muted)}
+.subtabs button.on{background:var(--brand-strong);color:#fff;border-color:var(--brand-strong)}
+.bars{display:flex;align-items:flex-end;gap:4px;height:120px;padding-bottom:20px}
+.bars .b{flex:1;background:linear-gradient(180deg,var(--brand2),var(--brand));border-radius:5px 5px 0 0;min-height:2px;position:relative}
+.bars .b span{position:absolute;bottom:-18px;left:0;right:0;text-align:center;font-size:11px;color:var(--muted)}
+@media(max-width:1080px){.pos{display:flex;flex-direction:column}.cart{position:static;order:-1}.prodgrid{max-height:52vh;overflow:auto}}
+@media(max-width:860px){#side{width:64px}#side .brand,.nav .item span,#side .foot{display:none}.nav .item{justify-content:center;padding:11px 0}#lanPill{display:none!important}.qbtn{width:40px;height:40px}.btn.sm{padding:10px 12px}.x{width:44px;height:44px}}
+@media(max-width:560px){.three{grid-template-columns:1fr 1fr}.seg button{padding:9px 8px;font-size:13px}}
+</style>
+</head>
+<body>
+
+<div id="login">
+  <div class="box">
+    <div class="logo center">Men<b>Q</b></div>
+    <p class="center" style="margin:2px 0 22px;letter-spacing:5px;font-weight:700;font-size:13px;color:var(--brand-strong)" data-i="login_sub">ՊԱՀԵՍՏ</p>
+    <label class="fld"><span data-i="user">Օգտատեր</span><input id="lg_user" autocomplete="username"></label>
+    <label class="fld"><span data-i="pass">Գաղտնաբառ</span><input id="lg_pass" type="password" autocomplete="current-password"></label>
+    <button class="btn primary lg" style="width:100%" onclick="doLogin()" data-i="login_btn">Մուտք</button>
+    <p id="lg_err" class="pill bad hidden" style="margin-top:12px;display:block;text-align:center"></p>
+  </div>
+</div>
+
+<div id="app" class="hidden">
+  <aside id="side">
+    <div class="brand">Men<b>Q</b></div>
+    <nav class="nav" id="nav"></nav>
+    <div class="foot"><span id="who"></span></div>
+  </aside>
+  <div id="main">
+    <div id="top">
+      <div class="title" id="viewTitle">—</div>
+      <div class="shopbrand"><img id="shopLogo" alt="" style="display:none"><span id="shopName"></span></div>
+      <div class="grow"></div>
+      <a class="pill ok" id="lanPill" target="_blank" style="display:none;text-decoration:none"></a>
+      <button class="btn sm" id="langBtn" onclick="toggleLang()">EN</button>
+      <button class="profchip" id="profileBtn" onclick="profileModal()"><span class="avatar" id="avatar"></span><span class="pname" id="pname"></span></button>
+    </div>
+    <div id="wrap"></div>
+  </div>
+</div>
+
+<div id="modalHost"></div>
+<div id="toast" class="toast"></div>
+
+<script>
+const WAREHOUSE="Պահեստ";
+const I18N = {
+  hy:{
+    login_sub:"ՊԱՀԵՍՏ", user:"Օգտատեր", pass:"Գաղտնաբառ", login_btn:"Մուտք", logout:"Ելք",
+    tab_dash:"Վահանակ", tab_stock:"Պահեստ", tab_pos:"Վաճառք", tab_purch:"Գնումներ",
+    tab_moves:"Շարժեր", tab_debts:"Պարտքեր", tab_transfers:"Տեղափոխություն", tab_finance:"Ֆինանս",
+    tab_reports:"Հաշվետվություն", tab_settings:"Կարգավորումներ",
+    add_product:"Ապրանք ավելացնել", search:"Որոնում...", export:"Արտահանել (CSV)", import:"Ներմուծել",
+    low:"Ցածր", qty:"Քանակ", price:"Գին", cost:"Ինքնարժեք", name:"Անուն", category:"Կատեգորիա",
+    brand:"Բրենդ", supplier:"Մատակարար", barcode:"Շտրիխ-կոդ", sku:"Կոդ/SKU", unit:"Միավոր",
+    wholesale:"Մեծածախ", photo:"Նկար", logo:"Լոգո", min:"Նվազ. մնացորդ", save:"Պահել", cancel:"Չեղարկել",
+    del:"Ջնջել", edit:"Խմբագրել", label:"Պիտակ", cart:"Զամբյուղ", empty_cart:"Զամբյուղը դատարկ է",
+    total:"Ընդամենը", discount:"Զեղչ", tax:"Հարկ", checkout:"Վաճառել", location:"Որտեղից",
+    payment:"Վճարում", cash:"Կանխիկ", card:"Քարտ", credit:"Ապառիկ", transfer:"Փոխանցում", retail:"Մանրածախ",
+    customer:"Հաճախորդ", delivery:"Առաքում", instore:"Խանութում", courier:"Առաքիչ",
+    to_shop:"Ո՞ր խանութին", paid:"Վճարված", receipt:"Չեկ", print:"Տպել",
+    sale_done:"Վաճառքն ավարտված", return_mode:"Վերադարձ", receive:"Ընդունել",
+    suppl_debt:"Մատակարարի պարտք", cust_debt:"Հաճախորդի պարտք", pay:"Մարել",
+    balance:"Կասսայի մնացորդ", revenue:"Հասույթ", profit:"Շահույթ", net:"Զուտ շահույթ",
+    expense:"Ծախս", income:"Մուտք", add:"Ավելացնել", from_loc:"Որտեղից", to_loc:"Ուր",
+    transfer_btn:"Տեղափոխել", period:"Ժամանակահատված", today:"Այսօր", d7:"7 օր", d30:"30 օր",
+    month:"Այս ամիս", year:"Այս տարի", apply:"Ցույց տալ", top_products:"Թոփ ապրանքներ",
+    by_shop:"Ըստ խանութի", by_courier:"Ըստ առաքիչի", by_seller:"Ըստ վաճառողի",
+    attributes:"Ապրանքի դաշտեր", masterdata:"Տվյալներ", users:"Օգտատերեր", shop:"Խանութ",
+    currency:"Արժույթ", role:"Դեր", admin:"Տնօրեն", seller:"Աշխատող", backup:"Պահուստ (.db)",
+    stock_val:"Պահեստի արժեք", sold:"Վաճառված", skus:"Դիրքեր",
+    scan_hint:"Սկան արա կամ որոնի, Enter՝ ավելացնել", no_data:"Դատարկ է", confirm_del:"Ջնջե՞լ",
+    attr_name:"Դաշտի անուն (օր. Չափս)", add_attr:"Դաշտ ավելացնել", tax_pct:"Հարկ %",
+    bonus_pct:"Բոնուս %", import_hint:"Կպցրու CSV (առաջին տողը՝ վերնագրեր՝ name,price,qty…) կամ ընտրի ֆայլ",
+    import_ph:"name,barcode,category,price,qty\nԿաթ,,Մթերք,450,30",
+    imported:"Ներմուծված", note:"Նշում", date:"Ամսաթիվ", kind:"Տեսակ",
+    movement:"Շարժ", in:"Մուտք", out:"Ելք", adjust:"Ճշգրտում", return_k:"Վերադարձ",
+    amount:"Գումար", reason:"Պատճառ", car:"Մեքենա",
+    bonus:"Բոնուս", cogs:"Ինքնարժեք", iotab:"Պահուստ",
+    phone:"Հեռախոս", contact:"Կոնտակտ", address:"Հասցե", plate:"Համարանիշ",
+    make:"Մակնիշ", model:"Մոդել", new_pass:"Նոր գաղտնաբառ",
+    profile:"Պրոֆիլ", change_pass:"Փոխել գաղտնաբառը", cur_pass:"Ընթացիկ գաղտնաբառ", warehouse:"Պահեստ", quit:"Փակել ծրագիրը", position:"Պաշտոն",
+    bad_login:"Սխալ մուտք", quit_confirm:"Փակե՞լ MenQ ծրագիրը",
+    stopped_msg:"փակված է, կարող ես փակել պատուհանը", days_short:"օր",
+    img_big:"Նկարը շատ մեծ ա (max ~1.3MB)", popup_blocked:"Popup-ը բլոկված ա, թույլատրի",
+    attr_hint:"Ավելացրու ապրանքի հատուկ դաշտեր (Չափս, Գույն, Մոդել, Ժամկետ...)։ Դատարկ թող՝ եթե պարզ խանութ ա։",
+    backup_hint:"Backup-ը ներբեռնում ա ամբողջ բազան մեկ .db ֆայլով։ Վերականգնում՝ դիր folder-ում որպես warehouse.db։",
+  },
+  en:{
+    login_sub:"WAREHOUSE", user:"User", pass:"Password", login_btn:"Sign in", logout:"Logout",
+    tab_dash:"Dashboard", tab_stock:"Stock", tab_pos:"Sell", tab_purch:"Purchases",
+    tab_moves:"Movements", tab_debts:"Debts", tab_transfers:"Transfer", tab_finance:"Finance",
+    tab_reports:"Reports", tab_settings:"Settings",
+    add_product:"Add product", search:"Search...", export:"Export CSV", import:"Import",
+    low:"Low", qty:"Qty", price:"Price", cost:"Cost", name:"Name", category:"Category",
+    brand:"Brand", supplier:"Supplier", barcode:"Barcode", sku:"SKU", unit:"Unit",
+    wholesale:"Wholesale", photo:"Photo", logo:"Logo", min:"Min stock", save:"Save", cancel:"Cancel",
+    del:"Delete", edit:"Edit", label:"Label", cart:"Cart", empty_cart:"Cart is empty",
+    total:"Total", discount:"Discount", tax:"Tax", checkout:"Sell", location:"From",
+    payment:"Payment", cash:"Cash", card:"Card", credit:"Credit", transfer:"Transfer", retail:"Retail",
+    customer:"Customer", delivery:"Delivery", instore:"In store", courier:"Courier",
+    to_shop:"To shop", paid:"Paid", receipt:"Receipt", print:"Print",
+    sale_done:"Sale complete", return_mode:"Return", receive:"Receive",
+    suppl_debt:"Supplier debt", cust_debt:"Customer debt", pay:"Pay",
+    balance:"Cash balance", revenue:"Revenue", profit:"Profit", net:"Net profit",
+    expense:"Expense", income:"Income", add:"Add", from_loc:"From", to_loc:"To",
+    transfer_btn:"Transfer", period:"Period", today:"Today", d7:"7 days", d30:"30 days",
+    month:"This month", year:"This year", apply:"Show", top_products:"Top products",
+    by_shop:"By shop", by_courier:"By courier", by_seller:"By seller",
+    attributes:"Product fields", masterdata:"Data", users:"Users", shop:"Shop",
+    currency:"Currency", role:"Role", admin:"Admin", seller:"Seller", backup:"Backup (.db)",
+    stock_val:"Stock value", sold:"Sold", skus:"Items",
+    scan_hint:"Scan or search, Enter to add", no_data:"Empty", confirm_del:"Delete?",
+    attr_name:"Field name (e.g. Size)", add_attr:"Add field", tax_pct:"Tax %",
+    bonus_pct:"Bonus %", import_hint:"Paste CSV (first row = headers: name,price,qty…) or pick a file",
+    import_ph:"name,barcode,category,price,qty\nMilk,,Grocery,450,30",
+    imported:"Imported", note:"Note", date:"Date", kind:"Kind",
+    movement:"Movement", in:"In", out:"Out", adjust:"Adjust", return_k:"Return",
+    amount:"Amount", reason:"Reason", car:"Car",
+    bonus:"Bonus", cogs:"COGS", iotab:"Backup",
+    phone:"Phone", contact:"Contact", address:"Address", plate:"Plate",
+    make:"Make", model:"Model", new_pass:"New password",
+    profile:"Profile", change_pass:"Change password", cur_pass:"Current password", warehouse:"Warehouse", quit:"Quit app", position:"Position",
+    bad_login:"Wrong credentials", quit_confirm:"Quit MenQ?",
+    stopped_msg:"stopped, you can close this window", days_short:"days",
+    img_big:"Image too big", popup_blocked:"Popup blocked — allow popups",
+    attr_hint:"Add product fields (Size, Color, Model, Expiry...). Leave empty for a simple store.",
+    backup_hint:"Backup downloads the whole database as one .db file. To restore, drop it in the folder as warehouse.db.",
+  }
+};
+let LANG = localStorage.getItem("menq_lang") || "hy";
+const t = k => (I18N[LANG][k] ?? I18N.hy[k] ?? k);
+const attrLabel = a => LANG==="en" ? (a.en||a.hy||a.key) : (a.hy||a.en||a.key);
+const locName = l => l===WAREHOUSE ? t("warehouse") : l;   // translate the built-in Warehouse
+// pretty custom dropdown (styled, unlike native <select> popups)
+function ddHTML(id, opts, val){
+  const cur = opts.find(o=>String(o.v)===String(val)) || opts[0] || {v:"",label:""};
+  const chev = `<svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>`;
+  return `<div class="dd" data-dd="${id}">
+    <input type="hidden" id="${id}" value="${esc(cur.v)}">
+    <button type="button" class="dd-btn" onclick="event.preventDefault();event.stopPropagation();ddToggle(this)"><span class="dd-lbl">${esc(cur.label)}</span>${chev}</button>
+    <div class="dd-menu">${opts.map(o=>`<div class="dd-opt${String(o.v)===String(cur.v)?" sel":""}" data-v="${esc(o.v)}" onclick="event.preventDefault();event.stopPropagation();ddPick(this)">${esc(o.label)}</div>`).join("")}</div>
+  </div>`;
+}
+function locDD(id, val){ return ddHTML(id, S.locations.map(l=>({v:l,label:locName(l)})), val||S.locations[0]||WAREHOUSE); }
+function ddCloseAll(){ document.querySelectorAll(".dd.open").forEach(d=>d.classList.remove("open")); }
+function ddPick(opt){
+  const dd=opt.closest(".dd"); const inp=document.getElementById(dd.dataset.dd);
+  if(inp){ inp.value=opt.dataset.v;
+    const lbl=dd.querySelector(".dd-lbl"); if(lbl) lbl.textContent=opt.textContent;
+    dd.querySelectorAll(".dd-opt").forEach(o=>o.classList.remove("sel")); opt.classList.add("sel");
+  }
+  ddCloseAll();
+}
+function ddToggle(btn){ const dd=btn.closest(".dd"); const willOpen=!dd.classList.contains("open"); ddCloseAll(); if(willOpen) dd.classList.add("open"); }
+document.addEventListener("click", ddCloseAll);
+
+const dispName = m => (m && m.name) ? m.name : (m ? t(m.role) : "");   // blank name -> translated role
+// built-in units translate; custom units show as typed
+const UNITS={"հատ":"pcs","կգ":"kg","գ":"g","լ":"L","մլ":"ml","մ":"m","տուփ":"box","փաթեթ":"pack"};
+const UNITS_REV=Object.fromEntries(Object.entries(UNITS).map(([k,v])=>[v,k]));
+const unitName = u => LANG==="en" ? (UNITS[u]||u) : (UNITS_REV[u]||u);
+function applyI18n(){
+  document.querySelectorAll("[data-i]").forEach(el=>{ el.textContent = t(el.getAttribute("data-i")); });
+  document.getElementById("langBtn").textContent = LANG==="hy" ? "EN" : "AM";
+  document.documentElement.lang = LANG;
+}
+function setUserChrome(){
+  if(!S.me) return;
+  const dn=dispName(S.me);
+  document.getElementById("who").textContent = S.me.name ? (S.me.name+" · "+t(S.me.role)) : t(S.me.role);
+  document.getElementById("pname").textContent = dn;
+  document.getElementById("avatar").textContent = (dn||"?").trim().charAt(0).toUpperCase();
+}
+function toggleLang(){ LANG = LANG==="hy"?"en":"hy"; localStorage.setItem("menq_lang",LANG); applyI18n();
+  if(S.me){ setUserChrome(); buildNav(); render(); } }
+
+const S = { me:null, settings:{}, currency:"֏", attrs:[], locations:[WAREHOUSE],
+            products:[], cart:[], pcart:[], mode:"sale", tab:"dash" };
+function money(n){ return (Math.round((+n||0)*100)/100).toLocaleString("hy-AM") + " " + S.currency; }
+function esc(s){ return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+async function api(method, path, body){
+  const opt={method,headers:{}};
+  if(body!==undefined){
+    if(typeof body==="string"){opt.headers["Content-Type"]="text/plain";opt.body=body;}
+    else{opt.headers["Content-Type"]="application/json";opt.body=JSON.stringify(body);}
+  }
+  const r=await fetch(path,opt);
+  if(r.status===401){ showLogin(); throw {status:401,msg:"unauthorized"}; }
+  const ct=r.headers.get("Content-Type")||"";
+  const data = ct.includes("json") ? await r.json() : await r.text();
+  if(!r.ok){ throw {status:r.status,msg:(data&&data.error)||("HTTP "+r.status),data}; }
+  return data;
+}
+let TOAST_T;
+function toast(msg,kind){ const el=document.getElementById("toast"); el.textContent=msg;
+  el.className="toast show "+(kind||""); clearTimeout(TOAST_T);
+  TOAST_T=setTimeout(()=>el.className="toast",2200); }
+const val=id=>{const e=document.getElementById(id);return e?e.value.trim():"";};
+const num=id=>{const e=document.getElementById(id);return e?(parseFloat(e.value)||0):0;};
+
+function showLogin(){ closeModal();   // never leave a modal floating over the login screen (e.g. after a 401)
+  document.getElementById("login").classList.remove("hidden");
+  document.getElementById("app").classList.add("hidden"); }
+async function doLogin(){
+  const u=document.getElementById("lg_user").value, p=document.getElementById("lg_pass").value;
+  const err=document.getElementById("lg_err");
+  try{ await api("POST","/api/login",{username:u,password:p}); err.classList.add("hidden"); await boot(); }
+  catch(e){ err.textContent = t("bad_login"); err.classList.remove("hidden"); }
+}
+async function doLogout(){ try{await api("POST","/api/logout");}catch(e){}
+  S.me=null; S.cart=[]; S.pcart=[]; S.mode="sale"; S.tab="dash"; showLogin(); }
+async function doExit(){ if(!confirm(t("quit_confirm"))) return;
+  try{ await api("POST","/api/shutdown"); }catch(e){}
+  document.body.innerHTML='<div style="display:flex;height:100vh;align-items:center;justify-content:center;font:600 20px sans-serif;color:#5b6579">MenQ — '+t("stopped_msg")+'</div>'; }
+function profileModal(){
+  const m=S.me; const dn=dispName(m); const ini=esc((dn||"?").trim().charAt(0).toUpperCase());
+  openModal({title:t("profile"),
+    body:`<div style="display:flex;align-items:center;gap:14px;margin-bottom:18px">
+        <div class="avatar" style="width:56px;height:56px;font-size:22px">${ini}</div>
+        <div>
+          <div class="muted" style="font-size:12.5px;font-weight:600">${t("position")}</div>
+          <div style="font-weight:800;font-size:17px">${t(m.role)} <span class="muted" style="font-weight:500;font-size:13px">@${esc(m.username)}</span></div>
+        </div>
+      </div>
+      <label class="fld"><span>${t("name")}</span><input id="pf_name" value="${esc(m.name||"")}" placeholder="${esc(t("name"))}"></label>
+      <h3 style="font-size:14px;margin:16px 0 12px">${t("change_pass")}</h3>
+      <div class="two">
+        <label class="fld"><span>${t("cur_pass")}</span><input id="pf_cur" type="password"></label>
+        <label class="fld"><span>${t("new_pass")}</span><input id="pf_new" type="password"></label>
+      </div>`,
+    foot:`<button class="btn bad" onclick="doLogout()">${t("logout")}</button>
+      ${m.role==="admin"?`<button class="btn" onclick="closeModal();doExit()"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v10"/><path d="M18.4 6.6a9 9 0 1 1-12.8 0"/></svg> ${t("quit")}</button>`:""}
+      <div class="grow"></div>
+      <button class="btn" onclick="closeModal()">${t("cancel")}</button>
+      <button class="btn primary" id="pf_save">${t("save")}</button>`});
+  document.getElementById("pf_save").onclick=async()=>{
+    const nw=val("pf_new"); const body={name:val("pf_name")};
+    if(nw){ body.current=val("pf_cur"); body.new=nw; }
+    try{ const r=await api("POST","/api/me/password",body);
+      S.me.name=r.name; setUserChrome();
+      closeModal(); toast(t("save")+" ✅","ok"); }
+    catch(e){ toast(e.msg||"error","bad"); }
+  };
+}
+
+const NAV = [
+  {id:"dash",   role:"admin",  i:"tab_dash",   svg:'<rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/>'},
+  {id:"stock",  role:"admin",  i:"tab_stock",  svg:'<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>'},
+  {id:"pos",    role:"any",    i:"tab_pos",    svg:'<circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>'},
+  {id:"purch",  role:"admin",  i:"tab_purch",  svg:'<path d="M12 3v12"/><path d="m8 11 4 4 4-4"/><path d="M3 21h18"/>'},
+  {id:"moves",  role:"admin",  i:"tab_moves",  svg:'<path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/>'},
+  {id:"debts",  role:"admin",  i:"tab_debts",  svg:'<rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/>'},
+  {id:"transfers",role:"admin",i:"tab_transfers",svg:'<path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/>'},
+  {id:"finance",role:"admin",  i:"tab_finance",svg:'<path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>'},
+  {id:"reports",role:"admin",  i:"tab_reports",svg:'<line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/>'},
+  {id:"settings",role:"admin", i:"tab_settings",svg:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>'},
+];
+function buildNav(){
+  const isAdmin = S.me.role==="admin";
+  const nav=document.getElementById("nav"); nav.innerHTML="";
+  NAV.filter(n=>isAdmin||n.role==="any").forEach(n=>{
+    const d=document.createElement("div"); d.className="item"+(n.id===S.tab?" active":"");
+    d.innerHTML=`<svg viewBox="0 0 24 24">${n.svg}</svg><span>${t(n.i)}</span>`;
+    d.onclick=()=>{ S.tab=n.id; buildNav(); render(); };
+    nav.appendChild(d);
+  });
+}
+
+async function boot(){
+  S.me = await api("GET","/api/me");
+  document.getElementById("login").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+  setUserChrome();
+  await loadSettings();
+  S.tab = S.me.role==="admin" ? "dash" : "pos";
+  applyI18n(); buildNav(); await render();
+}
+async function loadSettings(){
+  S.settings = await api("GET","/api/settings");
+  S.currency = S.settings.currency||"֏";
+  S.attrs = S.settings.attrs_def||[];
+  document.getElementById("shopName").textContent = S.settings.shop_name||"MenQ";
+  const sl=document.getElementById("shopLogo");
+  if(S.settings.logo){ sl.src=S.settings.logo; sl.style.display=""; } else sl.style.display="none";
+  const lp=document.getElementById("lanPill");
+  if(S.settings.lan_url){ lp.href=S.settings.lan_url; lp.textContent="📶 "+S.settings.lan_url; lp.style.display=""; }
+  else lp.style.display="none";
+  try{ S.locations = await api("GET","/api/locations"); }catch(e){ S.locations=[WAREHOUSE]; }
+}
+
+async function render(){
+  const titleMap={dash:"tab_dash",stock:"tab_stock",pos:"tab_pos",purch:"tab_purch",
+    moves:"tab_moves",debts:"tab_debts",transfers:"tab_transfers",finance:"tab_finance",
+    reports:"tab_reports",settings:"tab_settings"};
+  document.getElementById("viewTitle").textContent = t(titleMap[S.tab]||"tab_pos");
+  const w=document.getElementById("wrap");
+  try{
+    if(S.tab==="dash") return renderDash(w);
+    if(S.tab==="stock") return renderStock(w);
+    if(S.tab==="pos") return renderPos(w);
+    if(S.tab==="purch") return renderPurch(w);
+    if(S.tab==="moves") return renderMoves(w);
+    if(S.tab==="debts") return renderDebts(w);
+    if(S.tab==="transfers") return renderTransfers(w);
+    if(S.tab==="finance") return renderFinance(w);
+    if(S.tab==="reports") return renderReports(w);
+    if(S.tab==="settings") return renderSettings(w);
+  }catch(e){ if(e&&e.msg) toast(e.msg,"bad"); console.error(e); }
+}
+
+async function renderDash(w){
+  const st=await api("GET","/api/stats");
+  const rep=await api("GET","/api/reports?days=14");
+  const kpi=(k,v,cls)=>`<div class="kpi"><div class="k">${k}</div><div class="v ${cls||''}">${v}</div></div>`;
+  const maxRev=Math.max(1,...rep.daily.map(d=>d.revenue));
+  const bars=rep.daily.map(d=>`<div class="b" style="height:${Math.round(d.revenue/maxRev*100)}%" title="${d.date}: ${money(d.revenue)}"><span>${d.date.slice(5)}</span></div>`).join("");
+  const top=rep.top.length? rep.top.map(p=>`<tr><td>${esc(p.name)} <span class="muted">${esc(p.variant||"")}</span></td><td class="right">${p.units}</td><td class="right">${money(p.revenue)}</td></tr>`).join("") : `<tr><td colspan="3" class="muted center">${t("no_data")}</td></tr>`;
+  w.innerHTML=`
+  <div class="grid kpis" style="margin-bottom:18px">
+    ${kpi(t("skus"), st.skus)}
+    ${kpi(t("qty"), st.units)}
+    ${kpi(t("stock_val"), money(st.stock_cost),"small")}
+    ${kpi(t("balance"), money(st.cash_balance),"small")}
+    ${kpi(t("revenue"), money(st.revenue),"small")}
+    ${kpi(t("profit"), money(st.profit),"small")}
+    ${kpi(t("cust_debt"), money(st.total_debt),"small")}
+    ${kpi(t("suppl_debt"), money(st.payable),"small")}
+    ${kpi(t("low"), st.low_count)}
+  </div>
+  <div class="card"><h3>${t("revenue")} · 14 ${t("days_short")}</h3><div class="bars">${bars}</div></div>
+  <div class="card"><h3>${t("top_products")}</h3><div class="tbl-wrap"><table><thead><tr><th>${t("name")}</th><th class="right">${t("sold")}</th><th class="right">${t("revenue")}</th></tr></thead><tbody>${top}</tbody></table></div></div>`;
+}
+
+let stockSearch="";
+async function renderStock(w){
+  w.innerHTML=`
+  <div class="card">
+    <div class="row" style="align-items:center;margin-bottom:14px">
+      <input id="st_search" class="grow" placeholder="${t("search")}" value="${esc(stockSearch)}" style="max-width:340px">
+      <div class="grow"></div>
+      <button class="btn" onclick="importModal()">⬆ ${t("import")}</button>
+      <button class="btn" onclick="location.href='/api/export'">⬇ ${t("export")}</button>
+      <button class="btn primary" onclick="productModal()">+ ${t("add_product")}</button>
+    </div>
+    <div class="tbl-wrap"><table id="st_tbl"></table></div>
+  </div>`;
+  const inp=document.getElementById("st_search");
+  inp.oninput=()=>{ stockSearch=inp.value; clearTimeout(inp._t); inp._t=setTimeout(loadStock,200); };
+  await loadStock();
+}
+async function loadStock(){
+  const rows=await api("GET","/api/products?search="+encodeURIComponent(stockSearch));
+  S.products=rows;
+  const attrCols=S.attrs.map(a=>`<th>${esc(attrLabel(a))}</th>`).join("");
+  const head=`<thead><tr><th></th><th>${t("name")}</th><th>${t("barcode")}</th>${attrCols}<th class="right">${t("cost")}</th><th class="right">${t("price")}</th><th class="right">${t("qty")}</th><th></th></tr></thead>`;
+  const body=rows.map(r=>{
+    const ac=S.attrs.map(a=>`<td>${esc((r.attrs&&r.attrs[a.key])||"")}</td>`).join("");
+    return `<tr>
+      <td>${r.has_photo?`<img class="thumb" data-pid="${r.id}">`:`<div class="thumb"></div>`}</td>
+      <td><b>${esc(r.name)}</b> ${r.brand?`<span class="muted">${esc(r.brand)}</span>`:""}</td>
+      <td class="muted">${esc(r.barcode)}</td>
+      ${ac}
+      <td class="right">${r.cost_price!=null?money(r.cost_price):"—"}</td>
+      <td class="right">${money(r.sell_price)}</td>
+      <td class="right">${r.quantity} ${r.low?`<span class="pill bad">${t("low")}</span>`:""}</td>
+      <td class="right" style="white-space:nowrap">
+        <button class="btn sm" onclick="labelModal(${r.id})">🏷</button>
+        <button class="btn sm" onclick="productModal(${r.id})">${t("edit")}</button>
+      </td></tr>`;
+  }).join("") || `<tr><td colspan="9" class="muted center">${t("no_data")}</td></tr>`;
+  document.getElementById("st_tbl").innerHTML=head+"<tbody>"+body+"</tbody>";
+  document.querySelectorAll("img.thumb[data-pid]").forEach(async img=>{
+    try{ const p=await api("GET","/api/product?id="+img.dataset.pid); if(p.photo) img.src=p.photo; }catch(e){}
+  });
+}
+
+async function productModal(id){
+  let p={attrs:{}};
+  if(id){ p=await api("GET","/api/product?id="+id); }
+  const cats=await api("GET","/api/ref?entity=categories").catch(()=>[]);
+  const brands=await api("GET","/api/ref?entity=brands").catch(()=>[]);
+  const units=await api("GET","/api/ref?entity=units").catch(()=>[]);
+  const suppl=await api("GET","/api/ref?entity=suppliers").catch(()=>[]);
+  const dl=(lid,arr)=>`<datalist id="${lid}">${arr.map(x=>`<option value="${esc(x.name)}">`).join("")}</datalist>`;
+  const attrFields=S.attrs.map(a=>`<label class="fld"><span>${esc(attrLabel(a))}</span><input data-attr="${esc(a.key)}" value="${esc((p.attrs&&p.attrs[a.key])||"")}"></label>`).join("");
+  const curUnit=UNITS_REV[p.unit]||p.unit||"հատ";
+  let uopts=units.map(x=>({v:x.name,label:unitName(x.name)}));
+  if(!uopts.some(o=>o.v===curUnit)) uopts.unshift({v:curUnit,label:unitName(curUnit)});
+  openModal({
+    wide:true,
+    title: id? t("edit") : t("add_product"),
+    body:`
+      <div style="display:flex;gap:16px;align-items:center;margin-bottom:16px">
+        <div style="flex:0 0 88px">
+          <div id="ph_prev" style="width:88px;height:88px;border-radius:12px;border:1px solid var(--line);background:#f3f6fc;overflow:hidden;display:flex;align-items:center;justify-content:center">${p.photo?`<img src="${esc(p.photo)}" style="width:100%;height:100%;object-fit:cover">`:`<span class="muted" style="font-size:12px">${t("photo")}</span>`}</div>
+          <input type="file" id="ph_file" accept="image/*" class="hidden">
+        </div>
+        <div class="grow" style="min-width:200px">
+          <label class="fld" style="margin-bottom:8px"><span>${t("name")} *</span><input id="p_name" value="${esc(p.name||"")}"></label>
+          <button class="btn sm" onclick="document.getElementById('ph_file').click()">📷 ${t("photo")}</button>
+        </div>
+      </div>
+      <div class="fgrid">
+        <label class="fld"><span>${t("barcode")}</span><input id="p_barcode" value="${esc(p.barcode||"")}" placeholder="auto EAN-13"></label>
+        <label class="fld"><span>${t("sku")}</span><input id="p_sku" value="${esc(p.sku||"")}"></label>
+        <label class="fld"><span>${t("category")}</span><input id="p_category" list="dl_cat" value="${esc(p.category||"")}">${dl("dl_cat",cats)}</label>
+        <label class="fld"><span>${t("brand")}</span><input id="p_brand" list="dl_brand" value="${esc(p.brand||"")}">${dl("dl_brand",brands)}</label>
+        <label class="fld"><span>${t("unit")}</span>${ddHTML("p_unit",uopts,curUnit)}</label>
+        <label class="fld"><span>${t("supplier")}</span><input id="p_supplier" list="dl_suppl" value="${esc(p.supplier||"")}">${dl("dl_suppl",suppl)}</label>
+        ${attrFields}
+        <label class="fld"><span>${t("cost")}</span><input id="p_cost" type="number" value="${p.cost_price||0}"></label>
+        <label class="fld"><span>${t("price")}</span><input id="p_sell" type="number" value="${p.sell_price||0}"></label>
+        <label class="fld"><span>${t("wholesale")}</span><input id="p_ws" type="number" value="${p.wholesale_price||0}"></label>
+        <label class="fld"><span>${t("min")}</span><input id="p_min" type="number" value="${p.min_qty!=null?p.min_qty:2}"></label>
+        ${id?"":`<label class="fld span2"><span>${t("qty")}</span><input id="p_qty" type="number" value="0"></label>`}
+      </div>`,
+    foot:`${id?`<button class="btn bad" onclick="delProduct(${id})">${t("del")}</button>`:""}
+      <div class="grow"></div>
+      <button class="btn" onclick="closeModal()">${t("cancel")}</button>
+      <button class="btn primary" id="p_save">${t("save")}</button>`
+  });
+  let photoData = p.photo || undefined; let photoTouched=false;
+  document.getElementById("ph_file").onchange=e=>{
+    const f=e.target.files[0]; if(!f) return;
+    if(f.size>1400000){ toast(t("img_big"),"bad"); return; }
+    const rd=new FileReader(); rd.onload=()=>{ photoData=rd.result; photoTouched=true;
+      document.getElementById("ph_prev").innerHTML=`<img src="${photoData}" style="width:100%;height:100%;object-fit:cover">`; };
+    rd.readAsDataURL(f);
+  };
+  document.getElementById("p_save").onclick=async()=>{
+    const attrs={}; document.querySelectorAll("[data-attr]").forEach(i=>{ if(i.value.trim()) attrs[i.dataset.attr]=i.value.trim(); });
+    const data={ name:val("p_name"), barcode:val("p_barcode"), sku:val("p_sku"),
+      category:val("p_category"), brand:val("p_brand"), unit:val("p_unit"),
+      supplier:val("p_supplier"), attrs,
+      cost_price:num("p_cost"), sell_price:num("p_sell"), wholesale_price:num("p_ws"),
+      min_qty:num("p_min") };
+    if(!data.name){ toast(t("name")+" *","bad"); return; }
+    if(S.busy) return; S.busy=true;
+    try{
+      if(id){ if(photoTouched) data.photo=photoData||""; await api("PUT","/api/products/"+id,data); }
+      else { data.quantity=num("p_qty"); if(photoData) data.photo=photoData; await api("POST","/api/products",data); }
+      closeModal(); toast(t("save")+" ✅","ok"); loadStock();
+    }catch(e){ toast(e.msg||"error","bad"); }
+    finally{ S.busy=false; }
+  };
+}
+async function delProduct(id){ if(!confirm(t("confirm_del"))) return;
+  await api("DELETE","/api/products/"+id); closeModal(); toast(t("del")+" ✅","ok"); loadStock(); }
+
+async function labelModal(id){
+  const win=window.open("","_blank","width=420,height=360");
+  if(!win){ toast(t("popup_blocked"),"bad"); return; }
+  const p=await api("GET","/api/product?id="+id);
+  const w=+(S.settings.label_w||40), h=+(S.settings.label_h||30);
+  win.document.write(`<html><head><meta charset="utf-8"><title>Label</title><style>
+    @page{size:${w}mm ${h}mm;margin:0}
+    body{margin:0;font-family:sans-serif}
+    .lbl{width:${w}mm;height:${h}mm;padding:2mm;box-sizing:border-box;text-align:center;page-break-after:always;display:flex;flex-direction:column;justify-content:center}
+    .nm{font-size:9pt;font-weight:700;line-height:1.1}
+    .pr{font-size:12pt;font-weight:800}
+    svg{width:100%;height:${Math.max(8,h-16)}mm}
+    .num{font-size:7pt;letter-spacing:1px}
+  </style></head><body>
+    <div class="lbl"><div class="nm">${esc(p.name)} ${esc(p.variant||"")}</div>
+    ${barcodeSVG(p.barcode)}<div class="num">${esc(p.barcode)}</div>
+    <div class="pr">${money(p.sell_price)}</div></div>
+    <script>window.onload=function(){window.print();window.onafterprint=function(){window.close()}}<\/script></body></html>`);
+  win.document.close();
+}
+// Real, scannable Code128-B barcode (handles any ASCII, incl. our EAN-13 digits).
+const C128=["212222","222122","222221","121223","121322","131222","122213","122312","132212","221213","221312","231212","112232","122132","122231","113222","123122","123221","223211","221132","221231","213212","223112","312131","311222","321122","321221","312212","322112","322211","212123","212321","232121","111323","131123","131321","112313","132113","132311","211313","231113","231311","112133","112331","132131","113123","113321","133121","313121","211331","231131","213113","213311","213131","311123","311321","331121","312113","312311","332111","314111","221411","431111","111224","111422","121124","121421","141122","141221","112214","112412","122114","122411","142112","142211","241211","221114","413111","241112","134111","111242","121142","121241","114212","124112","124211","411212","421112","421211","212141","214121","412121","111143","111341","131141","114113","114311","411113","411311","113141","114131","311141","411131","211412","211214","211232","2331112"];
+function barcodeSVG(code){
+  let s=String(code||""); if(!s) s=" ";
+  const vals=[104]; let sum=104;              // Start Code B
+  for(let i=0;i<s.length;i++){ let v=s.charCodeAt(i)-32; if(v<0||v>94) v=0; vals.push(v); sum+=(i+1)*v; }
+  vals.push(sum%103); vals.push(106);         // checksum + Stop
+  const U=2; let x=10*U, rects="";            // left quiet zone
+  vals.forEach(v=>{ const pat=C128[v]||C128[0];
+    for(let j=0;j<pat.length;j++){ const w=(+pat[j])*U; if(j%2===0) rects+=`<rect x="${x}" y="0" width="${w}" height="100" fill="#000"/>`; x+=w; } });
+  const total=x+10*U;                         // right quiet zone
+  return `<svg viewBox="0 0 ${total} 100" preserveAspectRatio="none"><rect width="${total}" height="100" fill="#fff"/>${rects}</svg>`;
+}
+
+function importModal(){
+  openModal({title:t("import"),
+    body:`<p class="muted">${t("import_hint")}</p>
+      <input type="file" id="imp_file" accept=".csv,text/csv" style="margin-bottom:10px">
+      <textarea id="imp_text" rows="8" placeholder="${esc(t("import_ph"))}"></textarea>`,
+    foot:`<div class="grow"></div><button class="btn" onclick="closeModal()">${t("cancel")}</button>
+      <button class="btn primary" id="imp_go">${t("import")}</button>`});
+  document.getElementById("imp_file").onchange=e=>{ const f=e.target.files[0]; if(!f)return;
+    const rd=new FileReader(); rd.onload=()=>document.getElementById("imp_text").value=rd.result; rd.readAsText(f,"utf-8"); };
+  document.getElementById("imp_go").onclick=async()=>{
+    const text=document.getElementById("imp_text").value;
+    if(!text.trim()){ toast(t("no_data"),"bad"); return; }
+    const res=await api("POST","/api/import",text);
+    closeModal(); toast(t("imported")+": "+res.imported+(res.errors&&res.errors.length?(" · "+res.errors.length+" err"):""),"ok");
+    loadStock();
+  };
+}
+
+function renderPos(w){
+  S.cart=S.cart||[];
+  const isAdmin=S.me.role==="admin";
+  w.innerHTML=`
+  <div class="pos">
+    <div>
+      <div class="card">
+        <div class="row" style="align-items:center">
+          ${isAdmin?`<div class="seg" id="modeSeg"><button class="${S.mode==="sale"?"on":""}" onclick="setMode('sale')">${t("checkout")}</button><button class="${S.mode==="return"?"on":""}" onclick="setMode('return')">${t("return_mode")}</button></div>`:""}
+          <input id="pos_search" class="grow" placeholder="${t("scan_hint")}" autofocus>
+        </div>
+      </div>
+      <div class="prodgrid" id="pos_grid"></div>
+    </div>
+    <div class="card cart">
+      <h3>${S.mode==="return"?("🔄 "+t("return_mode")):("🛒 "+t("cart"))}</h3>
+      <label class="fld"><span>${t("location")}</span>${locDD("pos_loc",S.posLoc)}</label>
+      <div class="cartlist" id="cartlist"></div>
+      <div id="cartfoot"></div>
+      <datalist id="dl_cust"></datalist><datalist id="dl_courier"></datalist><datalist id="dl_shop"></datalist>
+    </div>
+  </div>`;
+  const inp=document.getElementById("pos_search");
+  inp.oninput=()=>{ clearTimeout(inp._t); inp._t=setTimeout(()=>posLoad(inp.value),160); };
+  inp.onkeydown=async e=>{ if(e.key==="Enter"){ e.preventDefault();
+    const code=inp.value.trim(); if(!code) return;
+    try{ const p=await api("GET","/api/product_by_barcode?code="+encodeURIComponent(code));
+      addToCart(p); inp.value=""; posLoad(""); }
+    catch(err){ posLoad(code); } } };
+  posLoad(""); renderCart(); fillDatalists();
+}
+function setMode(m){ S.mode=m; renderPos(document.getElementById("wrap")); }
+async function posLoad(q){
+  const rows=await api("GET","/api/products?search="+encodeURIComponent(q||""));
+  S.products=rows;
+  const g=document.getElementById("pos_grid"); if(!g) return;
+  g.innerHTML=rows.slice(0,60).map(r=>`
+    <div class="pcard ${r.quantity<=0&&S.mode==="sale"?"out":""}" onclick='addToCart(${JSON.stringify(r).replace(/'/g,"&#39;")})'>
+      <div class="nm">${esc(r.name)}</div>
+      <div class="vr">${esc(r.brand||"")} ${esc(r.variant||"")}</div>
+      <div class="pr">${money(r.sell_price)}</div>
+      <div class="qt">${t("qty")}: ${r.quantity}</div>
+    </div>`).join("") || `<p class="muted gridmsg">${t("no_data")}</p>`;
+}
+function addToCart(p){
+  const ex=S.cart.find(c=>c.product_id===p.id);
+  if(ex){ ex.qty++; } else { S.cart.push({product_id:p.id,name:p.name,brand:p.brand,variant:p.variant,
+    sell:p.sell_price, wholesale:p.wholesale_price||0, unit_price:p.sell_price, qty:1, edited:false}); }
+  renderCart();
+}
+function cartQty(pid,d){ const c=S.cart.find(x=>x.product_id===pid); if(!c)return;
+  c.qty+=d; if(c.qty<=0) S.cart=S.cart.filter(x=>x.product_id!==pid); renderCart(); }
+function cartPrice(pid,v){ const c=S.cart.find(x=>x.product_id===pid); if(c){ c.unit_price=parseFloat(v)||0; c.edited=true; } renderCartTotals(); }
+function renderCart(){
+  const list=document.getElementById("cartlist"), foot=document.getElementById("cartfoot");
+  if(!list) return;
+  const isAdmin=S.me.role==="admin";
+  if(!S.cart.length){ list.innerHTML=`<p class="muted center" style="padding:20px 0">${t("empty_cart")}</p>`; foot.innerHTML=""; return; }
+  list.innerHTML=S.cart.map(c=>`<div class="citem">
+    <div class="nm"><b>${esc(c.name)}</b><span class="muted">${esc(c.variant||"")}</span></div>
+    ${isAdmin?`<input type="number" value="${c.unit_price}" style="width:90px" onchange="cartPrice(${c.product_id},this.value)">`:`<span style="width:90px;text-align:right;display:inline-block">${money(c.unit_price)}</span>`}
+    <button class="qbtn" onclick="cartQty(${c.product_id},-1)">−</button>
+    <b style="width:22px;text-align:center">${c.qty}</b>
+    <button class="qbtn" onclick="cartQty(${c.product_id},1)">+</button>
+  </div>`).join("");
+  // build the footer ONCE; keep user's selections (payment/discount/customer) across qty edits
+  const built = S.mode==="return" ? document.getElementById("rpay") : document.getElementById("paySeg");
+  if(!built) buildCartFoot(foot);
+  renderCartTotals();
+}
+function buildCartFoot(foot){
+  if(S.mode==="return"){
+    foot.innerHTML=`
+      <div class="totbar"><span>${t("total")}</span><span class="big" id="rTotal">—</span></div>
+      <div class="seg" id="rpay" style="width:100%;margin-bottom:10px">
+        <button class="on" data-v="cash" style="flex:1" onclick="segPick('rpay',this)">${t("cash")}</button>
+        <button data-v="credit" style="flex:1" onclick="segPick('rpay',this)">${t("credit")}</button>
+      </div>
+      <button class="btn bad lg" style="width:100%" onclick="doReturn()">🔄 ${t("return_mode")}</button>`;
+    return;
+  }
+  const isAdmin=S.me.role==="admin";
+  foot.innerHTML=`
+    <div class="two">
+      ${isAdmin?`<label class="fld"><span>${t("discount")}</span><input id="pos_disc" type="number" value="0" oninput="renderCartTotals()"></label>`:""}
+      <label class="fld"><span>${t("customer")}</span><input id="pos_cust" list="dl_cust"></label>
+    </div>
+    <div class="seg" style="width:100%;margin-bottom:8px" id="typeSeg">
+      <button class="on" data-v="retail" style="flex:1" onclick="segPick('typeSeg',this);posDeliv()">${t("instore")}</button>
+      <button data-v="delivery" style="flex:1" onclick="segPick('typeSeg',this);posDeliv()">${t("delivery")}</button>
+    </div>
+    <div id="delivBox" class="hidden two">
+      <label class="fld"><span>${t("courier")}</span><input id="pos_courier" list="dl_courier"></label>
+      <label class="fld"><span>${t("to_shop")}</span><input id="pos_shop" list="dl_shop"></label>
+    </div>
+    ${isAdmin?`<div class="seg" style="width:100%;margin-bottom:8px" id="priceSeg">
+      <button class="on" data-v="retail" style="flex:1" onclick="segPick('priceSeg',this);posPriceMode()">${t("retail")}</button>
+      <button data-v="wholesale" style="flex:1" onclick="segPick('priceSeg',this);posPriceMode()">${t("wholesale")}</button></div>`:""}
+    <div class="seg" style="width:100%;margin-bottom:8px" id="paySeg">
+      <button class="on" data-v="cash" style="flex:1" onclick="segPick('paySeg',this);posPay()">${t("cash")}</button>
+      <button data-v="card" style="flex:1" onclick="segPick('paySeg',this);posPay()">${t("card")}</button>
+      <button data-v="credit" style="flex:1" onclick="segPick('paySeg',this);posPay()">${t("credit")}</button>
+      <button data-v="transfer" style="flex:1" onclick="segPick('paySeg',this);posPay()">${t("transfer")}</button>
+    </div>
+    <label class="fld hidden" id="paidRow"><span>${t("paid")}</span><input id="pos_paid" type="number" value="0" oninput="renderCartTotals()"></label>
+    <div id="posTotals"></div>
+    <button class="btn ok lg" style="width:100%" onclick="doCheckout()">✔ ${t("checkout")} · <span id="ckTotal"></span></button>`;
+}
+function posPay(){ const r=document.getElementById("paidRow"); if(r) r.classList.toggle("hidden",segVal("paySeg")!=="credit"); renderCartTotals(); }
+function posPriceMode(){ const ws=segVal("priceSeg")==="wholesale";
+  S.cart.forEach(c=>{ if(!c.edited) c.unit_price = (ws && c.wholesale>0)? c.wholesale : c.sell; });
+  renderCart(); }
+async function fillDatalists(){
+  const put=async(ent,dl)=>{ try{ const a=await api("GET","/api/ref?entity="+ent);
+    const el=document.getElementById(dl); if(el) el.innerHTML=a.map(x=>`<option value="${esc(x.name)}">`).join(""); }catch(e){} };
+  put("customers","dl_cust"); put("couriers","dl_courier"); put("shops","dl_shop");
+}
+function segPick(seg,btn){ const box=document.getElementById(seg);
+  box.querySelectorAll("button").forEach(b=>b.classList.remove("on")); btn.classList.add("on"); }
+function segVal(seg){ const b=document.querySelector("#"+seg+" button.on"); return b?b.dataset.v:""; }
+function posDeliv(){ const v=segVal("typeSeg"); document.getElementById("delivBox").classList.toggle("hidden",v!=="delivery"); }
+function renderCartTotals(){
+  const subtotal=S.cart.reduce((s,c)=>s+c.qty*c.unit_price,0);
+  const rt=document.getElementById("rTotal"); if(rt) rt.textContent=money(subtotal);
+  const disc=parseFloat((document.getElementById("pos_disc")||{}).value)||0;
+  const taxPct=+(S.settings.tax_percent||0);
+  const after=Math.max(0,Math.min(subtotal,subtotal-disc)); const tax=Math.round(after*taxPct/100*100)/100;
+  const total=after+tax;
+  const credit=segVal("paySeg")==="credit";
+  const paid=credit?(parseFloat((document.getElementById("pos_paid")||{}).value)||0):total;
+  const el=document.getElementById("posTotals");
+  if(el) el.innerHTML=`<div class="totbar muted"><span>${t("total")}</span><span>${money(subtotal)}</span></div>
+    ${disc?`<div class="totbar muted"><span>${t("discount")}</span><span>−${money(disc)}</span></div>`:""}
+    ${taxPct?`<div class="totbar muted"><span>${t("tax")} ${taxPct}%</span><span>${money(tax)}</span></div>`:""}
+    ${credit?`<div class="totbar" style="color:var(--bad)"><span>${t("cust_debt")}</span><span>${money(Math.max(0,total-paid))}</span></div>`:""}`;
+  const ck=document.getElementById("ckTotal"); if(ck) ck.textContent=money(total);
+}
+async function doCheckout(){
+  if(!S.cart.length){ toast(t("empty_cart"),"bad"); return; }
+  const pay=segVal("paySeg")||"cash";
+  const body={ items:S.cart.map(c=>({product_id:c.product_id,qty:c.qty,unit_price:c.unit_price})),
+    location:document.getElementById("pos_loc").value,
+    type:segVal("typeSeg")||"retail", price_mode:segVal("priceSeg")||"retail",
+    payment:pay,
+    discount:parseFloat((document.getElementById("pos_disc")||{}).value)||0,
+    customer:(document.getElementById("pos_cust")||{}).value||"",
+    courier:(document.getElementById("pos_courier")||{}).value||"",
+    shop:(document.getElementById("pos_shop")||{}).value||"" };
+  if(pay==="credit") body.paid=parseFloat((document.getElementById("pos_paid")||{}).value)||0;
+  if(S.busy) return; S.busy=true;
+  try{
+    const res=await api("POST","/api/sale",body);
+    S.cart=[]; S.posLoc=body.location; toast(t("sale_done")+" ✅","ok"); receiptModal(res); renderPos(document.getElementById("wrap"));
+  }catch(e){ toast(e.msg||"error","bad"); }
+  finally{ S.busy=false; }
+}
+async function doReturn(){
+  if(!S.cart.length){ toast(t("empty_cart"),"bad"); return; }
+  const body={ items:S.cart.map(c=>({product_id:c.product_id,qty:c.qty,unit_price:c.unit_price})),
+    location:document.getElementById("pos_loc").value, payment:segVal("rpay")||"cash" };
+  if(S.busy) return; S.busy=true;
+  try{ const res=await api("POST","/api/return",body); S.cart=[]; S.posLoc=body.location;
+    toast(t("return_mode")+" ✅","ok"); receiptModal(res,true); renderPos(document.getElementById("wrap")); }
+  catch(e){ toast(e.msg||"error","bad"); }
+  finally{ S.busy=false; }
+}
+function receiptModal(r,isReturn){
+  const rows=(r.items||[]).map(i=>`<tr><td>${esc(i.name)} <span class="muted">${esc(i.variant||"")}</span></td><td class="right">${i.qty}×${money(i.unit_sell)}</td><td class="right">${money(i.line)}</td></tr>`).join("");
+  openModal({title:(isReturn?"🔄 ":"🧾 ")+t("receipt")+" · "+esc(r.ref),
+    body:`<div id="rcpt">
+      ${S.settings.logo?`<div class="center" style="margin-bottom:6px"><img src="${esc(S.settings.logo)}" style="max-height:56px;max-width:72%;object-fit:contain"></div>`:""}
+      <div class="center" style="font-weight:800;font-size:18px">${esc(S.settings.shop_name||"MenQ")}</div>
+      <div class="center muted" style="margin-bottom:10px">${esc(r.created_at||"")} · ${esc(locName(r.location||""))}</div>
+      <table>${rows}</table>
+      <div class="totbar" style="margin-top:10px"><b>${t("total")}</b><b class="big">${money(r.total)}</b></div>
+      ${r.discount?`<div class="totbar muted"><span>${t("discount")}</span><span>−${money(r.discount)}</span></div>`:""}
+      ${r.tax?`<div class="totbar muted"><span>${t("tax")}</span><span>${money(r.tax)}</span></div>`:""}
+      ${r.debt?`<div class="totbar" style="color:var(--bad)"><span>${t("cust_debt")}</span><span>${money(r.debt)}</span></div>`:""}
+      ${r.bonus?`<div class="totbar" style="color:var(--ok)"><span>${t("bonus")}</span><span>+${money(r.bonus)}</span></div>`:""}
+    </div>`,
+    foot:`<div class="grow"></div><button class="btn" onclick="closeModal()">OK</button>
+      <button class="btn primary" onclick="printEl('rcpt')">🖨 ${t("print")}</button>`});
+}
+function printEl(id){
+  const html=document.getElementById(id).innerHTML;
+  const win=window.open("","_blank","width=400,height=600");
+  if(!win){ toast(t("popup_blocked"),"bad"); return; }
+  win.document.write(`<html><head><meta charset="utf-8"><title>${t("receipt")}</title><style>
+    @page{margin:0}
+    /* width:100% (not a fixed px) so the receipt fits any roll — 58mm rolls clipped at 300px */
+    body{font-family:sans-serif;font-size:13px;padding:8px;width:100%;box-sizing:border-box}
+    table{width:100%;border-collapse:collapse} td{padding:3px 0;border-bottom:1px dashed #ccc}
+    .right{text-align:right}.center{text-align:center}.muted{color:#666}.totbar{display:flex;justify-content:space-between;margin-top:6px}.big{font-size:18px}
+  </style></head><body>${html}<script>window.onload=function(){window.print();window.onafterprint=function(){window.close()}}<\/script></body></html>`);
+  win.document.close();
+}
+
+function renderPurch(w){
+  S.pcart=S.pcart||[];
+  w.innerHTML=`
+  <div class="pos">
+    <div>
+      <div class="card"><input id="pu_search" class="grow" placeholder="${t("scan_hint")}"></div>
+      <div class="prodgrid" id="pu_grid"></div>
+    </div>
+    <div class="card cart">
+      <h3>⬇ ${t("receive")}</h3>
+      <div class="two">
+        <label class="fld"><span>${t("supplier")}</span><input id="pu_suppl" list="dl_suppl2"></label>
+        <label class="fld"><span>${t("location")}</span>${locDD("pu_loc")}</label>
+      </div>
+      <div class="cartlist" id="pcartlist"></div>
+      <div id="pcartfoot"></div>
+      <datalist id="dl_suppl2"></datalist>
+    </div>
+  </div>
+  <div class="card"><h3>${t("tab_purch")}</h3><div class="tbl-wrap"><table id="pu_hist"></table></div></div>`;
+  const inp=document.getElementById("pu_search");
+  inp.oninput=()=>{ clearTimeout(inp._t); inp._t=setTimeout(()=>puLoad(inp.value),160); };
+  inp.onkeydown=async e=>{ if(e.key==="Enter"){e.preventDefault(); const code=inp.value.trim(); if(!code)return;
+    try{ const p=await api("GET","/api/product_by_barcode?code="+encodeURIComponent(code)); addPCart(p); inp.value=""; puLoad("");}catch(err){puLoad(code);} } };
+  puLoad(""); renderPCart(); loadPuHist();
+  api("GET","/api/ref?entity=suppliers").then(a=>{const el=document.getElementById("dl_suppl2");if(el)el.innerHTML=a.map(x=>`<option value="${esc(x.name)}">`).join("");}).catch(()=>{});
+}
+async function puLoad(q){
+  const rows=await api("GET","/api/products?search="+encodeURIComponent(q||""));
+  const g=document.getElementById("pu_grid"); if(!g)return;
+  g.innerHTML=rows.slice(0,60).map(r=>`<div class="pcard" onclick='addPCart(${JSON.stringify(r).replace(/'/g,"&#39;")})'>
+    <div class="nm">${esc(r.name)}</div><div class="vr">${esc(r.brand||"")} ${esc(r.variant||"")}</div>
+    <div class="pr">${money(r.cost_price||0)}</div><div class="qt">${t("qty")}: ${r.quantity}</div></div>`).join("")||`<p class="muted gridmsg">${t("no_data")}</p>`;
+}
+function addPCart(p){ const ex=S.pcart.find(c=>c.product_id===p.id);
+  if(ex){ex.qty++;}else{S.pcart.push({product_id:p.id,name:p.name,variant:p.variant,unit_cost:p.cost_price||0,qty:1});} renderPCart(); }
+function pcartQty(pid,d){const c=S.pcart.find(x=>x.product_id===pid);if(!c)return;c.qty+=d;if(c.qty<=0)S.pcart=S.pcart.filter(x=>x.product_id!==pid);renderPCart();}
+function pcartCost(pid,v){const c=S.pcart.find(x=>x.product_id===pid);if(c)c.unit_cost=parseFloat(v)||0;renderPCartTotals();}
+function renderPCart(){
+  const list=document.getElementById("pcartlist"),foot=document.getElementById("pcartfoot"); if(!list)return;
+  if(!S.pcart.length){list.innerHTML=`<p class="muted center" style="padding:20px 0">${t("empty_cart")}</p>`;foot.innerHTML="";return;}
+  list.innerHTML=S.pcart.map(c=>`<div class="citem"><div class="nm"><b>${esc(c.name)}</b><span class="muted">${esc(c.variant||"")}</span></div>
+    <input type="number" value="${c.unit_cost}" style="width:90px" onchange="pcartCost(${c.product_id},this.value)">
+    <button class="qbtn" onclick="pcartQty(${c.product_id},-1)">−</button><b style="width:22px;text-align:center">${c.qty}</b>
+    <button class="qbtn" onclick="pcartQty(${c.product_id},1)">+</button></div>`).join("");
+  // build the footer ONCE so a qty/cost edit never resets the payment choice (credit -> cash)
+  if(!document.getElementById("puPay")) buildPCartFoot(foot);
+  renderPCartTotals();
+}
+function buildPCartFoot(foot){
+  foot.innerHTML=`<div class="totbar"><span>${t("total")}</span><span class="big" id="puTotal">—</span></div>
+    <div class="seg" style="width:100%;margin-bottom:8px" id="puPay">
+      <button class="on" data-v="cash" style="flex:1" onclick="segPick('puPay',this);puPay()">${t("cash")}</button>
+      <button data-v="card" style="flex:1" onclick="segPick('puPay',this);puPay()">${t("card")}</button>
+      <button data-v="credit" style="flex:1" onclick="segPick('puPay',this);puPay()">${t("credit")}</button>
+      <button data-v="transfer" style="flex:1" onclick="segPick('puPay',this);puPay()">${t("transfer")}</button></div>
+    <label class="fld hidden" id="pu_paidRow"><span>${t("paid")}</span><input id="pu_paid" type="number" value="0" oninput="renderPCartTotals()"></label>
+    <button class="btn ok lg" style="width:100%" onclick="doPurchase()">✔ ${t("receive")} · <span id="puCk"></span></button>`;
+}
+function puPay(){ const r=document.getElementById("pu_paidRow"); if(r) r.classList.toggle("hidden",segVal("puPay")!=="credit"); }
+function renderPCartTotals(){
+  const total=S.pcart.reduce((s,c)=>s+c.qty*c.unit_cost,0);
+  const tot=document.getElementById("puTotal"); if(tot) tot.textContent=money(total);
+  const ck=document.getElementById("puCk"); if(ck) ck.textContent=money(total);
+}
+async function doPurchase(){
+  if(!S.pcart.length){toast(t("empty_cart"),"bad");return;}
+  const pay=segVal("puPay")||"cash";
+  const body={items:S.pcart.map(c=>({product_id:c.product_id,qty:c.qty,unit_cost:c.unit_cost})),
+    supplier:document.getElementById("pu_suppl").value, location:document.getElementById("pu_loc").value,
+    payment:pay, paid:pay==="credit"?(parseFloat(document.getElementById("pu_paid").value)||0):undefined};
+  if(S.busy) return; S.busy=true;
+  try{ await api("POST","/api/purchase",body); S.pcart=[]; toast(t("receive")+" ✅","ok");
+    renderPurch(document.getElementById("wrap")); }catch(e){toast(e.msg||"error","bad");}
+  finally{ S.busy=false; }
+}
+async function loadPuHist(){
+  const rows=await api("GET","/api/purchases"); const el=document.getElementById("pu_hist"); if(!el)return;
+  el.innerHTML=`<thead><tr><th>${t("date")}</th><th>${t("supplier")}</th><th>${t("location")}</th><th class="right">${t("total")}</th><th class="right">${t("paid")}</th><th class="right">${t("suppl_debt")}</th></tr></thead><tbody>`+
+    (rows.map(r=>`<tr><td class="muted">${esc((r.created_at||"").slice(0,16).replace("T"," "))}</td><td>${esc(r.supplier||"—")}</td><td>${esc(locName(r.location))}</td><td class="right">${money(r.total)}</td><td class="right">${money(r.paid)}</td><td class="right ${r.debt?"":"muted"}">${money(r.debt)}</td></tr>`).join("")||`<tr><td colspan="6" class="muted center">${t("no_data")}</td></tr>`)+"</tbody>";
+}
+
+async function renderMoves(w){
+  const rows=await api("GET","/api/movements");
+  const kindPill=k=>({in:`<span class="pill ok">${t("in")}</span>`,out:`<span class="pill warn">${t("out")}</span>`,
+    adjust:`<span class="pill info">${t("adjust")}</span>`,transfer:`<span class="pill info">↔</span>`,
+    return:`<span class="pill bad">${t("return_k")}</span>`}[k]||k);
+  w.innerHTML=`<div class="card"><div class="tbl-wrap"><table>
+    <thead><tr><th>${t("date")}</th><th>${t("movement")}</th><th>${t("name")}</th><th class="right">${t("qty")}</th><th>${t("note")}</th></tr></thead>
+    <tbody>${rows.map(r=>`<tr><td class="muted">${esc((r.created_at||"").slice(0,16).replace("T"," "))}</td><td>${kindPill(r.kind)}</td><td><b>${esc(r.name)}</b> <span class="muted">${esc(r.variant||"")}</span></td><td class="right">${r.qty}</td><td class="muted">${esc(r.note||"")}</td></tr>`).join("")||`<tr><td colspan="5" class="muted center">${t("no_data")}</td></tr>`}</tbody></table></div></div>`;
+}
+
+async function renderDebts(w){
+  const debts=await api("GET","/api/debts");
+  const pay=await api("GET","/api/payables");
+  w.innerHTML=`
+  <div class="card"><h3>${t("cust_debt")}</h3><div class="tbl-wrap"><table>
+    <thead><tr><th>${t("date")}</th><th>${t("customer")}/${t("shop")}</th><th class="right">${t("total")}</th><th class="right">${t("cust_debt")}</th><th></th></tr></thead>
+    <tbody>${debts.map(r=>`<tr><td class="muted">${esc((r.created_at||"").slice(0,10))}</td><td>${esc(r.customer||r.shop||r.ref)}</td><td class="right">${money(r.total)}</td><td class="right" style="color:var(--bad)">${money(r.debt)}</td><td class="right"><button class="btn sm primary" onclick="payDebt(${r.id},${r.debt})">${t("pay")}</button></td></tr>`).join("")||`<tr><td colspan="5" class="muted center">${t("no_data")}</td></tr>`}</tbody></table></div></div>
+  <div class="card"><h3>${t("suppl_debt")}</h3><div class="tbl-wrap"><table>
+    <thead><tr><th>${t("date")}</th><th>${t("supplier")}</th><th class="right">${t("total")}</th><th class="right">${t("suppl_debt")}</th><th></th></tr></thead>
+    <tbody>${pay.map(r=>`<tr><td class="muted">${esc((r.created_at||"").slice(0,10))}</td><td>${esc(r.supplier||r.ref)}</td><td class="right">${money(r.total)}</td><td class="right" style="color:var(--bad)">${money(r.debt)}</td><td class="right"><button class="btn sm primary" onclick="paySupp(${r.id},${r.debt})">${t("pay")}</button></td></tr>`).join("")||`<tr><td colspan="5" class="muted center">${t("no_data")}</td></tr>`}</tbody></table></div></div>`;
+}
+async function payDebt(id,max){ const a=prompt(t("pay")+" ("+t("amount")+")",max); if(a===null)return;
+  await api("POST","/api/debts/pay",{sale_id:id,amount:parseFloat(a)||0}); toast(t("pay")+" ✅","ok"); render(); }
+async function paySupp(id,max){ const a=prompt(t("pay")+" ("+t("amount")+")",max); if(a===null)return;
+  await api("POST","/api/purchase/pay",{purchase_id:id,amount:parseFloat(a)||0}); toast(t("pay")+" ✅","ok"); render(); }
+
+async function renderTransfers(w){
+  const trs=await api("GET","/api/transfers");
+  const ls=await api("GET","/api/locstock");
+  w.innerHTML=`
+  <div class="card"><h3>${t("tab_transfers")}</h3>
+    <div class="row" style="align-items:flex-end">
+      <label class="fld grow"><span>${t("name")}</span><input id="tr_prod" list="dl_trprod" placeholder="${t("search")}"><datalist id="dl_trprod"></datalist></label>
+      <label class="fld"><span>${t("from_loc")}</span>${locDD("tr_from")}</label>
+      <label class="fld"><span>${t("to_loc")}</span>${locDD("tr_to")}</label>
+      <label class="fld"><span>${t("qty")}</span><input id="tr_qty" type="number" value="1" style="width:90px"></label>
+      <button class="btn primary" onclick="doTransfer()">${t("transfer_btn")}</button>
+    </div>
+  </div>
+  <div class="card"><h3>${t("shop")} — ${t("qty")}</h3><div class="tbl-wrap"><table>
+    <thead><tr><th>${t("shop")}</th><th>${t("name")}</th><th class="right">${t("qty")}</th></tr></thead>
+    <tbody>${ls.map(r=>`<tr><td>${esc(locName(r.location))}</td><td>${esc(r.brand||"")} ${esc(r.name)} <span class="muted">${esc(r.variant||"")}</span></td><td class="right">${r.qty}</td></tr>`).join("")||`<tr><td colspan="3" class="muted center">${t("no_data")}</td></tr>`}</tbody></table></div></div>
+  <div class="card"><h3>${t("tab_moves")}</h3><div class="tbl-wrap"><table>
+    <thead><tr><th>${t("date")}</th><th>${t("name")}</th><th>${t("from_loc")} → ${t("to_loc")}</th><th class="right">${t("qty")}</th></tr></thead>
+    <tbody>${trs.map(r=>`<tr><td class="muted">${esc((r.created_at||"").slice(0,16).replace("T"," "))}</td><td>${esc(r.brand||"")} ${esc(r.name)} <span class="muted">${esc(r.variant||"")}</span></td><td>${esc(locName(r.from_loc))} → ${esc(locName(r.to_loc))}</td><td class="right">${r.qty}</td></tr>`).join("")||`<tr><td colspan="4" class="muted center">${t("no_data")}</td></tr>`}</tbody></table></div></div>`;
+  const rows=await api("GET","/api/products");
+  const dl=document.getElementById("dl_trprod");
+  window._trMap={};
+  dl.innerHTML=rows.map(r=>{const label=`${r.name} ${r.variant||""} · ${r.barcode}`; window._trMap[label]=r.id; return `<option value="${esc(label)}">`;}).join("");
+}
+async function doTransfer(){
+  const key=document.getElementById("tr_prod").value; const pid=window._trMap&&window._trMap[key];
+  if(!pid){ toast(t("no_data"),"bad"); return; }
+  const body={product_id:pid,from_loc:document.getElementById("tr_from").value,
+    to_loc:document.getElementById("tr_to").value,qty:parseInt(document.getElementById("tr_qty").value)||0};
+  if(S.busy) return; S.busy=true;
+  try{ await api("POST","/api/transfer",body); toast(t("transfer_btn")+" ✅","ok"); renderTransfers(document.getElementById("wrap")); }
+  catch(e){ toast(e.msg||"error","bad"); }
+  finally{ S.busy=false; }
+}
+
+async function renderFinance(w){
+  const f=await api("GET","/api/finance");
+  const cb=await api("GET","/api/cashbox");
+  const kpi=(k,v)=>`<div class="kpi"><div class="k">${k}</div><div class="v small">${money(v)}</div></div>`;
+  w.innerHTML=`
+  <div class="grid kpis" style="margin-bottom:18px">
+    ${kpi(t("balance"),f.cash_balance)}
+    ${kpi(t("revenue"),f.revenue)}
+    ${kpi(t("profit"),f.gross_profit)}
+    ${kpi(t("net"),f.net)}
+    ${kpi(t("cogs"),f.cogs)}
+    ${kpi(t("expense"),f.expenses)}
+    ${kpi(t("return_k"),f.returns)}
+    ${kpi(t("cust_debt"),f.total_debt)}
+    ${kpi(t("suppl_debt"),f.payable)}
+  </div>
+  <div class="card"><h3>${t("income")}/${t("expense")}</h3>
+    <div class="row" style="align-items:flex-end">
+      <label class="fld"><span>${t("kind")}</span><div class="seg" id="cbKind"><button class="on" data-v="out" onclick="segPick('cbKind',this)">${t("expense")}</button><button data-v="in" onclick="segPick('cbKind',this)">${t("income")}</button></div></label>
+      <label class="fld"><span>${t("amount")}</span><input id="cb_amt" type="number" style="width:130px"></label>
+      <label class="fld grow"><span>${t("reason")}</span><input id="cb_reason"></label>
+      <button class="btn primary" onclick="cbAdd()">${t("add")}</button>
+    </div>
+  </div>
+  <div class="card"><h3>${t("balance")}: ${money(cb.balance)}</h3><div class="tbl-wrap"><table>
+    <thead><tr><th>${t("date")}</th><th>${t("kind")}</th><th>${t("reason")}</th><th class="right">${t("amount")}</th></tr></thead>
+    <tbody>${cb.rows.map(r=>`<tr><td class="muted">${esc((r.created_at||"").slice(0,16).replace("T"," "))}</td><td>${r.kind==="in"?`<span class="pill ok">${t("income")}</span>`:`<span class="pill bad">${t("expense")}</span>`}</td><td>${esc(r.reason||"")}</td><td class="right">${r.kind==="in"?"+":"−"}${money(r.amount)}</td></tr>`).join("")||`<tr><td colspan="4" class="muted center">${t("no_data")}</td></tr>`}</tbody></table></div></div>`;
+}
+async function cbAdd(){ const amt=parseFloat(document.getElementById("cb_amt").value)||0;
+  if(!amt){toast(t("amount"),"bad");return;}
+  if(S.busy) return; S.busy=true;
+  try{ await api("POST","/api/cashbox",{kind:segVal("cbKind")||"out",amount:amt,reason:document.getElementById("cb_reason").value});
+    toast(t("save")+" ✅","ok"); renderFinance(document.getElementById("wrap")); }
+  catch(e){ toast(e.msg||"error","bad"); }
+  finally{ S.busy=false; }
+}
+
+let repFrom="",repTo="";
+async function renderReports(w){
+  const q=(repFrom||repTo)?`?from=${repFrom}&to=${repTo}`:"";
+  const r=await api("GET","/api/period"+q);
+  const s=r.summary;
+  const kpi=(k,v)=>`<div class="kpi"><div class="k">${k}</div><div class="v small">${v}</div></div>`;
+  const tbl=(title,rows,cols)=>`<div class="card"><h3>${title}</h3><div class="tbl-wrap"><table><thead><tr>${cols.map(c=>`<th class="${c.r?'right':''}">${c.h}</th>`).join("")}</tr></thead><tbody>${rows.length?rows.map(row=>`<tr>${cols.map(c=>`<td class="${c.r?'right':''}">${c.f?c.f(row[c.k],row):esc(row[c.k]??"")}</td>`).join("")}</tr>`).join(""):`<tr><td colspan="${cols.length}" class="muted center">${t("no_data")}</td></tr>`}</tbody></table></div></div>`;
+  w.innerHTML=`
+  <div class="card"><div class="row" style="align-items:flex-end">
+    <label class="fld"><span>${t("from_loc")}</span><input type="date" id="rp_from" value="${r.from}"></label>
+    <label class="fld"><span>${t("to_loc")}</span><input type="date" id="rp_to" value="${r.to}"></label>
+    <button class="btn primary" onclick="repApply()">${t("apply")}</button>
+    <div class="grow"></div>
+    <button class="btn sm" onclick="repQuick('today')">${t("today")}</button>
+    <button class="btn sm" onclick="repQuick('7')">${t("d7")}</button>
+    <button class="btn sm" onclick="repQuick('30')">${t("d30")}</button>
+    <button class="btn sm" onclick="repQuick('month')">${t("month")}</button>
+    <button class="btn sm" onclick="repQuick('year')">${t("year")}</button>
+  </div></div>
+  <div class="grid kpis" style="margin-bottom:18px">
+    ${kpi(t("revenue"),money(s.revenue))}${kpi(t("profit"),money(s.profit))}
+    ${kpi(t("sold"),s.units)}${kpi(t("cash"),money(s.cash))}
+    ${kpi(t("card"),money(s.card))}${kpi(t("credit"),money(s.credit))}${kpi(t("transfer"),money(s.transfer))}
+  </div>
+  ${tbl(t("top_products"),r.by_product,[{h:t("name"),k:"name",f:(v,row)=>esc(v)+' <span class="muted">'+esc(row.variant||"")+'</span>'},{h:t("sold"),k:"units",r:1},{h:t("revenue"),k:"sell_total",r:1,f:v=>money(v)},{h:t("profit"),k:"profit",r:1,f:v=>money(v)}])}
+  ${r.by_shop.length?tbl(t("by_shop"),r.by_shop,[{h:t("shop"),k:"shop"},{h:t("sold"),k:"units",r:1},{h:t("revenue"),k:"revenue",r:1,f:v=>money(v)},{h:t("profit"),k:"profit",r:1,f:v=>money(v)}]):""}
+  ${r.by_courier.length?tbl(t("by_courier"),r.by_courier,[{h:t("courier"),k:"courier"},{h:t("sold"),k:"units",r:1},{h:t("revenue"),k:"revenue",r:1,f:v=>money(v)}]):""}
+  ${r.by_seller.length?tbl(t("by_seller"),r.by_seller,[{h:t("seller"),k:"seller"},{h:t("sold"),k:"units",r:1},{h:t("revenue"),k:"revenue",r:1,f:v=>money(v)},{h:t("profit"),k:"profit",r:1,f:v=>money(v)}]):""}`;
+}
+function repApply(){ repFrom=document.getElementById("rp_from").value; repTo=document.getElementById("rp_to").value; renderReports(document.getElementById("wrap")); }
+function repQuick(kind){ const today=new Date();
+  const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+  let f=new Date(today);
+  if(kind==="today"){} else if(kind==="7"){f.setDate(f.getDate()-6);} else if(kind==="30"){f.setDate(f.getDate()-29);}
+  else if(kind==="month"){f=new Date(today.getFullYear(),today.getMonth(),1);} else if(kind==="year"){f=new Date(today.getFullYear(),0,1);}
+  repFrom=iso(f); repTo=iso(today); renderReports(document.getElementById("wrap")); }
+
+let setTab="shop";
+async function renderSettings(w){
+  const tabs=[["shop",t("shop")],["attributes",t("attributes")],["masterdata",t("masterdata")],["users",t("users")],["data",t("iotab")]];
+  w.innerHTML=`<div class="subtabs">${tabs.map(x=>`<button class="${setTab===x[0]?"on":""}" onclick="setTab='${x[0]}';renderSettings(document.getElementById('wrap'))">${x[1]}</button>`).join("")}</div><div id="setBody"></div>`;
+  const b=document.getElementById("setBody");
+  if(setTab==="shop") return setShop(b);
+  if(setTab==="attributes") return setAttrs(b);
+  if(setTab==="masterdata") return setMaster(b);
+  if(setTab==="users") return setUsers(b);
+  if(setTab==="data") return setData(b);
+}
+function setShop(b){
+  const s=S.settings;
+  b.innerHTML=`<div class="card"><h3>${t("shop")}</h3>
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">
+      <div id="lg_prev" style="width:150px;height:64px;border:1px solid var(--line);border-radius:10px;background:#f3f6fc;display:flex;align-items:center;justify-content:center;overflow:hidden">${s.logo?`<img src="${esc(s.logo)}" style="max-width:100%;max-height:100%;object-fit:contain">`:`<span class="muted" style="font-size:12px">${t("logo")}</span>`}</div>
+      <input type="file" id="lg_file" accept="image/*" class="hidden">
+      <button class="btn sm" onclick="document.getElementById('lg_file').click()">📷 ${t("logo")}</button>
+      <button class="btn sm bad" onclick="removeLogo()">${t("del")}</button>
+    </div>
+    <div class="two">
+      <label class="fld"><span>${t("shop")} (${t("name")})</span><input id="s_shop" value="${esc(s.shop_name||"")}"></label>
+      <label class="fld"><span>${t("currency")}</span><input id="s_curr" value="${esc(s.currency||"֏")}"></label>
+      <label class="fld"><span>${t("tax_pct")}</span><input id="s_tax" type="number" value="${esc(s.tax_percent||"0")}"></label>
+      <label class="fld"><span>${t("bonus_pct")}</span><input id="s_bonus" type="number" value="${esc(s.bonus_percent||"0")}"></label>
+      <label class="fld"><span>${t("label")} W (mm)</span><input id="s_lw" type="number" value="${esc(s.label_w||"40")}"></label>
+      <label class="fld"><span>${t("label")} H (mm)</span><input id="s_lh" type="number" value="${esc(s.label_h||"30")}"></label>
+    </div>
+    <button class="btn primary" onclick="saveShop()">${t("save")}</button></div>`;
+  window._logoPending=undefined;
+  document.getElementById("lg_file").onchange=e=>{ const f=e.target.files[0]; if(!f) return;
+    if(f.size>1400000){ toast(t("img_big"),"bad"); return; }
+    const rd=new FileReader(); rd.onload=()=>{ window._logoPending=rd.result;
+      document.getElementById("lg_prev").innerHTML=`<img src="${rd.result}" style="max-width:100%;max-height:100%;object-fit:contain">`; };
+    rd.readAsDataURL(f); };
+}
+function removeLogo(){ window._logoPending=""; document.getElementById("lg_prev").innerHTML=`<span class="muted" style="font-size:12px">${t("logo")}</span>`; }
+async function saveShop(){
+  const data={shop_name:val("s_shop"),currency:val("s_curr"),
+    tax_percent:val("s_tax"),bonus_percent:val("s_bonus"),label_w:val("s_lw"),label_h:val("s_lh")};
+  if(window._logoPending!==undefined) data.logo=window._logoPending;
+  await api("POST","/api/settings",data);
+  await loadSettings(); toast(t("save")+" ✅","ok"); renderSettings(document.getElementById("wrap"));
+}
+function setAttrs(b){
+  const rows=S.attrs.map((a,i)=>`<div class="citem"><b class="grow">${esc(attrLabel(a))} <span class="muted">(${esc(a.key)})</span></b>
+    <button class="btn sm bad" onclick="delAttr(${i})">${t("del")}</button></div>`).join("")||`<p class="muted gridmsg">${t("no_data")}</p>`;
+  b.innerHTML=`<div class="card"><h3>${t("attributes")}</h3>
+    <p class="muted">${t("attr_hint")}</p>
+    ${rows}
+    <div class="row" style="align-items:flex-end;margin-top:12px">
+      <label class="fld grow"><span>${t("attr_name")}</span><input id="at_name" placeholder="${t("attr_name")}"></label>
+      <button class="btn primary" onclick="addAttr()">${t("add_attr")}</button>
+    </div></div>`;
+}
+function translit(s){ return s.trim().toLowerCase().replace(/[^a-z0-9ա-ֆ]+/g,"_").replace(/^_|_$/g,"")||("f"+(Date.now()%10000)); }
+async function addAttr(){
+  const name=val("at_name"); if(!name){toast(t("attr_name"),"bad");return;}
+  const key=translit(name);
+  const list=[...S.attrs,{key,hy:name,en:name}];
+  await api("POST","/api/settings",{attrs_def:list}); await loadSettings(); renderSettings(document.getElementById("wrap"));
+}
+async function delAttr(i){ const list=S.attrs.filter((_,j)=>j!==i);
+  await api("POST","/api/settings",{attrs_def:list}); await loadSettings(); renderSettings(document.getElementById("wrap")); }
+
+let mdEntity="categories";
+async function setMaster(b){
+  const ents=[["categories",t("category")],["brands",t("brand")],["units",t("unit")],
+    ["suppliers",t("supplier")],["shops",t("shop")],["couriers",t("courier")],
+    ["cars",t("car")],["customers",t("customer")]];
+  b.innerHTML=`<div class="subtabs">${ents.map(e=>`<button class="${mdEntity===e[0]?"on":""}" onclick="mdEntity='${e[0]}';setMaster(document.getElementById('setBody'))">${e[1]}</button>`).join("")}</div><div id="mdBody"></div>`;
+  const mb=document.getElementById("mdBody");
+  const rows=await api("GET","/api/ref?entity="+mdEntity);
+  const cols=({categories:["name"],brands:["name"],units:["name"],
+    suppliers:["name","phone","contact","note"],shops:["name","address","phone","contact","note"],
+    couriers:["name","phone","note"],cars:["courier","make","model","plate"],
+    customers:["name","phone","bonus","note"]})[mdEntity];
+  mb.innerHTML=`<div class="card">
+    <div class="row" style="align-items:flex-end;margin-bottom:12px">
+      ${cols.map(c=>`<label class="fld ${c==='name'?'grow':''}"><span>${t(c)}</span><input id="md_${c}"></label>`).join("")}
+      <button class="btn primary" onclick="mdAdd(${JSON.stringify(cols).replace(/"/g,'&quot;')})">${t("add")}</button>
+    </div>
+    <div class="tbl-wrap"><table><thead><tr>${cols.map(c=>`<th>${t(c)}</th>`).join("")}<th></th></tr></thead>
+    <tbody>${rows.map(r=>`<tr>${cols.map(c=>`<td>${esc(mdEntity==="units"&&c==="name"?unitName(r[c]):(r[c]||""))}</td>`).join("")}<td class="right"><button class="btn sm bad" onclick="mdDel(${r.id})">${t("del")}</button></td></tr>`).join("")||`<tr><td colspan="${cols.length+1}" class="muted center">${t("no_data")}</td></tr>`}</tbody></table></div></div>`;
+}
+async function mdAdd(cols){ const data={}; let ok=false;
+  cols.forEach(c=>{ data[c]=val("md_"+c); if(data[c])ok=true; });
+  if(!ok){toast(t("name"),"bad");return;}
+  await api("POST","/api/ref?entity="+mdEntity,data); toast(t("add")+" ✅","ok");
+  if(mdEntity==="shops") await loadSettings(); setMaster(document.getElementById("setBody")); }
+async function mdDel(id){ if(!confirm(t("confirm_del")))return; await api("DELETE","/api/ref/"+mdEntity+"/"+id);
+  if(mdEntity==="shops") await loadSettings(); setMaster(document.getElementById("setBody")); }
+
+async function setUsers(b){
+  const users=await api("GET","/api/users");
+  S._users=users;   // cache so the Edit button passes only an id (no user data in inline HTML -> no XSS)
+  b.innerHTML=`<div class="card"><h3>${t("users")}</h3>
+    <div class="tbl-wrap"><table><thead><tr><th>${t("user")}</th><th>${t("name")}</th><th>${t("role")}</th><th></th></tr></thead>
+    <tbody>${users.map(u=>`<tr><td><b>${esc(u.username)}</b></td><td>${esc(u.name||"")}</td><td>${u.role==="admin"?`<span class="pill info">${t("admin")}</span>`:`<span class="pill">${t("seller")}</span>`}</td>
+      <td class="right"><button class="btn sm" onclick="userModal(${u.id})">${t("edit")}</button>
+      <button class="btn sm bad" onclick="userDel(${u.id})">${t("del")}</button></td></tr>`).join("")}</tbody></table></div>
+    <button class="btn primary" style="margin-top:12px" onclick="userModal()">+ ${t("users")}</button></div>`;
+}
+function userModal(id){
+  const u = id ? (S._users||[]).find(x=>x.id===id) : null;
+  const username = u ? u.username : "", name = u ? (u.name||"") : "", role = u ? u.role : "seller";
+  openModal({title:id?t("edit"):t("users"),
+    body:`<label class="fld"><span>${t("user")}</span><input id="u_user" value="${esc(username||"")}" ${id?"disabled":""}></label>
+      <label class="fld"><span>${t("name")}</span><input id="u_name" value="${esc(name||"")}"></label>
+      <label class="fld"><span>${id?t("new_pass"):t("pass")}</span><input id="u_pass" type="password"></label>
+      <label class="fld"><span>${t("role")}</span>${ddHTML("u_role",[{v:"seller",label:t("seller")},{v:"admin",label:t("admin")}],role||"seller")}</label>`,
+    foot:`<div class="grow"></div><button class="btn" onclick="closeModal()">${t("cancel")}</button><button class="btn primary" id="u_save">${t("save")}</button>`});
+  document.getElementById("u_save").onclick=async()=>{
+    const data={name:val("u_name"),role:document.getElementById("u_role").value};
+    const pass=val("u_pass"); if(pass)data.password=pass;
+    try{
+      if(id){ await api("PUT","/api/users/"+id,data); }
+      else{ data.username=val("u_user"); if(!data.username||!pass){toast(t("user")+"+"+t("pass"),"bad");return;}
+        await api("POST","/api/users",data); }
+      closeModal(); toast(t("save")+" ✅","ok"); setUsers(document.getElementById("setBody"));
+    }catch(e){ toast(e.msg||"error","bad"); }
+  };
+}
+async function userDel(id){ if(!confirm(t("confirm_del")))return;
+  try{ await api("DELETE","/api/users/"+id); toast(t("del")+" ✅","ok"); setUsers(document.getElementById("setBody")); }
+  catch(e){ toast(e.msg||"error","bad"); } }
+
+function setData(b){
+  b.innerHTML=`<div class="card"><h3>${t("iotab")}</h3>
+    <div class="row">
+      <button class="btn" onclick="location.href='/api/export'">⬇ ${t("export")}</button>
+      <button class="btn" onclick="importModal()">⬆ ${t("import")}</button>
+      <button class="btn primary" onclick="location.href='/api/backup'">💾 ${t("backup")}</button>
+    </div>
+    <p class="muted" style="margin-top:12px">${t("backup_hint")}</p></div>`;
+}
+
+function openModal(o){
+  document.getElementById("modalHost").innerHTML=`<div class="modal" role="dialog" aria-modal="true" onmousedown="this._d=(event.target===this)" onclick="if(event.target===this&&this._d)closeModal()">
+    <div class="sheet ${o.wide?'wide':''}"><div class="mhead"><h3>${o.title}</h3><button class="x" aria-label="Close" onclick="closeModal()">×</button></div>
+    <div class="mbody">${o.body}</div><div class="mfoot">${o.foot||""}</div></div></div>`;
+  const first=document.querySelector("#modalHost .mbody input,#modalHost .mbody select,#modalHost .mbody textarea");
+  if(first) setTimeout(()=>{try{first.focus();}catch(e){}},30);
+}
+function closeModal(){ document.getElementById("modalHost").innerHTML=""; }
+
+document.getElementById("lg_pass").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});
+applyI18n();
+boot().catch(()=>showLogin());
+</script>
+</body>
+</html>
